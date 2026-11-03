@@ -1,58 +1,80 @@
+
 package udg.cuvalles.mynavigation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(
-    userId: String,
-    userName: String,
+    onRegistrar: (String, String, String) -> Unit,
     onBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    var id by remember { mutableStateOf("") }
+    var nombre by remember { mutableStateOf("") }
+    var precio by remember { mutableStateOf("") }
 
-        Text(
-            text = "Perfil del usuario",
-            fontSize = 28.sp
-        )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Registro de producto") },
+                navigationIcon = {
+                    TextButton(onClick = onBack) {
+                        Text("Volver")
+                    }
+                }
+            )
+        }
+    ) { padding ->
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "ID Usuario: $userId",
-            fontSize = 20.sp
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Nombre: $userName",
-            fontSize = 20.sp
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = onBack
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
         ) {
-            Text("Regresar")
+
+            OutlinedTextField(
+                value = id,
+                onValueChange = { id = it },
+                label = { Text("ID Producto") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre Producto") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = precio,
+                onValueChange = { precio = it },
+                label = { Text("Precio") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    onRegistrar(id, nombre, precio)
+                },
+                enabled = id.isNotBlank() &&
+                        nombre.isNotBlank() &&
+                        precio.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Registrar producto")
+            }
         }
     }
 }

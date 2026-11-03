@@ -7,7 +7,5 @@ import kotlinx.serialization.Serializable
 data object HomeRoute
 
 @Serializable
-data class ProfileRoute(
-    val userId: String,
-    val userName: String
-)
+data object ProfileRoute
+

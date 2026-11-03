@@ -1,69 +1,73 @@
+
 package udg.cuvalles.mynavigation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
-    onNavigationProfile: (String, String) -> Unit
+    productos: List<Triple<String, String, String>>,
+    onNavigationProfile: () -> Unit
 ) {
-    var userId by rememberSaveable { mutableStateOf("") }
-    var userName by rememberSaveable { mutableStateOf("") }
+    var buscar by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("My App Reg") }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigationProfile
+            ) {
+                Text("+")
+            }
+        }
+    ) { padding ->
 
-        Text(
-            text = "Ingresa el nombre del usuario",
-            fontSize = 24.sp
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = userId,
-            onValueChange = { userId = it },
-            label = { Text("Id Usuario") }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = userName,
-            onValueChange = { userName = it },
-            label = { Text("Nombre Usuario") }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                if (userId.isNotBlank() && userName.isNotBlank()) {
-                    onNavigationProfile(userId, userName)
-                }
-            },
-            enabled = userId.isNotBlank() && userName.isNotBlank()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
         ) {
-            Text("Ir al perfil")
+            Text("Buscar")
+
+            OutlinedTextField(
+                value = buscar,
+                onValueChange = { buscar = it },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Lista de productos")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn {
+                items(
+                    productos.filter {
+                        it.second.contains(buscar, ignoreCase = true)
+                    }
+                ) { producto ->
+
+                    Text("ID: ${producto.first}")
+                    Text("Nombre: ${producto.second}")
+                    Text("Precio: $${producto.third}")
+
+                    HorizontalDivider()
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }

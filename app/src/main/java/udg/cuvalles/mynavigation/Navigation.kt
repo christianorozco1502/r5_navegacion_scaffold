@@ -1,42 +1,42 @@
 
 package udg.cuvalles.mynavigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 
 @Composable
 fun Navigation() {
 
     val navController = rememberNavController()
 
+    val productos = remember {
+        mutableStateListOf<Triple<String, String, String>>()
+    }
+
     NavHost(
         navController = navController,
         startDestination = HomeRoute
     ) {
 
+
         composable<HomeRoute> {
             Home(
-                onNavigationProfile = { id, name ->
-                    navController.navigate(
-                        ProfileRoute(
-                            userId = id,
-                            userName = name
-                        )
-                    )
+                productos = productos,
+                onNavigationProfile = {
+                    navController.navigate(ProfileRoute)
                 }
             )
         }
 
-        composable<ProfileRoute> { backStackEntry ->
 
-            val profileArgs = backStackEntry.toRoute<ProfileRoute>()
-
+        composable<ProfileRoute> {
             Profile(
-                userId = profileArgs.userId,
-                userName = profileArgs.userName,
+                onRegistrar = { id, nombre, precio ->
+                    productos.add(Triple(id, nombre, precio))
+                    navController.popBackStack()
+                },
                 onBack = {
                     navController.popBackStack()
                 }
